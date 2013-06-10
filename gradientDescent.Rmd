@@ -1,0 +1,495 @@
+Gradient Descent
+================
+Il gradient descent è un algoritmo che, data una certa funzione ipotesi _h_ e funzione costo _J_ carattetizzata da un numero qualsiasi di features <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&theta;</mi></mrow></math>, fa iterativamente variare suddetti parametri in modo da minimizzare il valore della funzione costo J. L'idea di base è che la funzione costo dipende direttamente dal residuo, ovvero tanto più basso è il valore che assume la funzione costo, tanto minore è il residuo e quindi maggiore la capacità descrittiva del modello di regressione.
+
+Ciò è intuitivo se ricordiamo che:
+
+* L'ipotesi _h_ è, una volta fissati i parametri <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&theta;</mi></mrow></math>, funzione delle osservazioni
+* La funzione costo è funzione dei vari parametri <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&theta;</mi></mrow></math>.
+
+Caso: regressione lineare ad una variabile
+------------------------------------------
+Nel caso della regressione lineare ad una variabile, la funzione costo è dipendente da due valori <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>&theta;</mi><mn>0</mn></msub></mrow></math> e <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>&theta;</mi><mn>1</mn></msub></mrow></math>. L'equazione della retta del modello di regressione che desideriamo calcolare è espressa dall'equazione dell'ipotesi, ovvero:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+
+<!--  Created with FireMath www.firemath.info  -->
+
+<mrow>
+  <msub>
+        <mrow>
+          <mi>h</mi><mo>&ApplyFunction;</mo>
+        </mrow>
+        <mi>&theta;</mi>
+  </msub>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mi>x</mi>
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <msub>
+          <mi>&theta;</mi>
+        <mn>0</mn>
+  </msub>
+  <mo>+</mo>
+  <msub>
+          <mi>&theta;</mi>
+        <mn>1</mn>
+  </msub>
+  <mi>x</mi>
+</mrow>
+</math>
+La funzione costo _J_ normalmente scelta per i modelli di regressione lineare è la funzione dello scarto quadratico (_square error function_) espressa da:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+
+<!--  Created with FireMath www.firemath.info  -->
+
+<mrow>
+  <mi>J</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <msub>
+              <mi>&theta;</mi>
+            <mn>0</mn>
+      </msub>
+      <mo>,</mo>
+      <msub>
+              <mi>&theta;</mi>
+            <mn>1</mn>
+      </msub>
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mn>1</mn>
+    </mrow>
+    <mrow>
+      <mn>2</mn>
+      <mi>n</mi>
+    </mrow>
+  </mfrac>
+  <munderover>
+          <mo>&Sum;</mo>
+      <mrow>
+        <mi>i</mi>
+        <mo>=</mo>
+        <mn>1</mn>
+      </mrow>
+        <mi>n</mi>
+  </munderover>
+  <msup>
+        <mrow>
+          <mfenced open="(" close=")" separators=",">
+            <mrow>
+              <msub>
+                    <mrow>
+                      <mi>h</mi><mo>&ApplyFunction;</mo>
+                    </mrow>
+                    <mi>&theta;</mi>
+              </msub>
+              <mfenced open="(" close=")" separators=",">
+                <mrow>
+                  <msup>
+                          <mi>x</mi>
+                        <mfenced open="(" close=")" separators=",">
+                          <mrow>
+                            <mi>i</mi>
+                          </mrow>
+                        </mfenced>
+                  </msup>
+                </mrow>
+              </mfenced>
+              <mo>-</mo>
+              <msup>
+                      <mi>y</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mi>i</mi>
+                      </mrow>
+                    </mfenced>
+              </msup>
+            </mrow>
+          </mfenced>
+        </mrow>
+        <mn>2</mn>
+  </msup>
+</mrow>
+</math>
+con _n_ il numero di osservazioni del campione, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow>
+  <msub>
+        <mrow>
+          <mi>h</mi><mo>&ApplyFunction;</mo>
+        </mrow>
+        <mi>&theta;</mi>
+  </msub>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <msup>
+              <mi>x</mi>
+            <mfenced open="(" close=")" separators=",">
+              <mrow>
+                <mi>i</mi>
+              </mrow>
+            </mfenced>
+      </msup>
+    </mrow>
+  </mfenced>
+</mrow>
+</math> il valore previsto dall'ipotesi per la i-esima osservazione e <math display="inline">
+<mrow>
+  <msup>
+          <mi>y</mi>
+        <mfenced open="(" close=")" separators=",">
+          <mrow>
+            <mi>i</mi>
+          </mrow>
+        </mfenced>
+  </msup>
+</mrow>
+</math>
+il valore osservato.
+L'algoritmo prevede di risolvere un problema di minimizzazione risolvendo la J per i theta, ponendo la derivata a zero e raggiungendo quindi un minimo locale. Di fatto, questa funzione costo è convessa, quindi presenta un unico minimo locale che è anche un minimo globale per la funzione.
+
+L'idea iterativa è che, dato un learning rate 'alpha' e una funzione di aggiornamento di cui consideriamo il gradiente f'(.), facciamo decrescere il valore di x per il valore del gradiente fino a raggiungere la convergenza, ovvero il punto in cui il gradienter è nullo (punto di minimo):
+
+ripeti fino alla convergenza: {
+  x := x - α∇F(x)  
+}
+
+Nel caso del modello di regressione lineare, la funzione F è rappresentata dalla funzione costo _J_ nei due parametri theta0 e theta1. Esprimendo il gradiente come derivate parziali:
+<math display="block">
+<mrow>
+  <msub>
+          <mi>&theta;</mi>
+        <mi>j</mi>
+  </msub>
+  <mo>:=</mo>
+  <msub>
+          <mi>&theta;</mi>
+        <mi>j</mi>
+  </msub>
+  <mo>-</mo>
+  <mfrac>
+    <mrow>
+      <mo>&PartialD;</mo>
+    </mrow>
+    <mrow>
+      <mo>&PartialD;</mo>
+      <msub>
+              <mi>&theta;</mi>
+            <mi>j</mi>
+      </msub>
+    </mrow>
+  </mfrac>
+  <mi>J</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <msub>
+              <mi>&theta;</mi>
+            <mn>0</mn>
+      </msub>
+    </mrow>
+    <mrow>
+      <msub>
+              <mi>&theta;</mi>
+            <mn>1</mn>
+      </msub>
+    </mrow>
+  </mfenced>
+</mrow>
+</math>
+(per j=0 e j=1; è importante che le due funzioni di aggiornamento siano applicate simultaneamente)
+Risolvendo l'equazione differenziale:
+<math display="block">
+<mrow>
+  <mfrac>
+    <mrow>
+      <mo>&PartialD;</mo>
+    </mrow>
+    <mrow>
+      <mo>&PartialD;</mo>
+      <msub>
+              <mi>&theta;</mi>
+            <mi>J</mi>
+      </msub>
+    </mrow>
+  </mfrac>
+  <mi>J</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      
+          <mi>&theta;</mi>
+      
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mn>1</mn>
+    </mrow>
+    <mrow>
+      <mi>n</mi>
+    </mrow>
+  </mfrac>
+  <munderover>
+          <mo>&Sum;</mo>
+      <mrow>
+        <mi>i</mi>
+        <mo>=</mo>
+        <mn>1</mn>
+      </mrow>
+        <mi>n</mi>
+  </munderover>
+  <msup>
+        <mrow>
+          <mfenced open="(" close=")" separators=",">
+            <mrow>
+              <msub>
+                    <mrow>
+                      <mi>h</mi><mo>&ApplyFunction;</mo>
+                    </mrow>
+                    <mi>&theta;</mi>
+              </msub>
+              <mfenced open="(" close=")" separators=",">
+                <mrow>
+                  <msup>
+                          <mi>x</mi>
+                        <mfenced open="(" close=")" separators=",">
+                          <mrow>
+                            <mi>i</mi>
+                          </mrow>
+                        </mfenced>
+                  </msup>
+                </mrow>
+              </mfenced>
+              <mo>-</mo>
+              <msup>
+                      <mi>y</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mi>i</mi>
+                      </mrow>
+                    </mfenced>
+              </msup>
+            </mrow>
+          </mfenced>
+        </mrow>
+        <mn>2</mn>
+  </msup>
+</mrow>
+</math>
+In pratica, il gradiente discendente diventa:
+
+ripetere fino alla convergenza {
+
+<math display="block">
+<mrow>
+  <msub>
+          <mi>&theta;</mi>
+        <mi>J</mi>
+  </msub>
+  <mo>:</mo>
+  <mo>=</mo>
+  <msub>
+          <mi>&theta;</mi>
+        <mi>J</mi>
+  </msub>
+  <mo>-</mo>
+  <mi>&alpha;</mi>
+  <mfrac>
+    <mrow>
+      <mn>1</mn>
+    </mrow>
+    <mrow>
+      <mi>n</mi>
+    </mrow>
+  </mfrac>
+  <munderover>
+          <mo>&Sum;</mo>
+      <mrow>
+        <mi>i</mi>
+        <mo>=</mo>
+        <mn>1</mn>
+      </mrow>
+        <mi>n</mi>
+  </munderover>
+  <msup>
+        <mrow>
+          <mfenced open="(" close=")" separators=",">
+            <mrow>
+              <msub>
+                    <mrow>
+                      <mi>h</mi><mo>&ApplyFunction;</mo>
+                    </mrow>
+                    <mi>&theta;</mi>
+              </msub>
+              <mfenced open="(" close=")" separators=",">
+                <mrow>
+                  <msup>
+                          <mi>x</mi>
+                        <mfenced open="(" close=")" separators=",">
+                          <mrow>
+                            <mi>i</mi>
+                          </mrow>
+                        </mfenced>
+                  </msup>
+                </mrow>
+              </mfenced>
+              <mo>-</mo>
+              <msup>
+                      <mi>y</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mi>i</mi>
+                      </mrow>
+                    </mfenced>
+              </msup>
+            </mrow>
+          </mfenced>
+        </mrow>
+        <mn>2</mn>
+  </msup>
+</mrow>
+</math>
+(per j=0 e j=1, applicati simultaneamente)
+}
+
+Il codice che segue confronta i valori ottenuti per theta0 e theta1 con il gradient descent, il calcolo matriciale e la funzione lm() di R (che restituisce i valori di intercetta e pendenza della retta di espressione del modello lineare).
+
+```{r}
+# get data 
+x0 <- c(1,1,1,1,1) # column of 1's
+x1 <- c(1,2,3,4,5) # original x-values
+ 
+# create the x- matrix of explanatory variables
+ 
+x <- as.matrix(cbind(x0,x1))
+ 
+# create the y-matrix of dependent variables
+ 
+y <- as.matrix(c(3,7,5,11,14))
+m <- nrow(y)
+ 
+# implement feature scaling
+x.scaled <- x
+x.scaled[,2] <- (x[,2] - mean(x[,2]))/sd(x[,2])
+ 
+# analytical results with matrix algebra
+ solve(t(x)%*%x)%*%t(x)%*%y # w/o feature scaling
+ solve(t(x.scaled)%*%x.scaled)%*%t(x.scaled)%*%y # w/ feature scaling
+ 
+# results using canned lm function match results above
+summary(lm(y ~ x[, 2])) # w/o feature scaling
+summary(lm(y ~ x.scaled[, 2])) # w/feature scaling
+ 
+# define the gradient function dJ/dtheata: 1/m * (h(x)-y))*x where h(x) = x*theta
+# in matrix form this is as follows:
+grad <- function(x, y, theta) {
+  gradient <- (1/m)* (t(x) %*% ((x %*% t(theta)) - y))
+  return(t(gradient))
+}
+ 
+# define gradient descent update algorithm
+grad.descent <- function(x, maxit){
+    theta <- matrix(c(0, 0), nrow=1) # Initialize the parameters
+ 
+    alpha = .05 # set learning rate
+    for (i in 1:maxit) {
+      theta <- theta - alpha  * grad(x, y, theta)   
+    }
+ return(theta)
+}
+ 
+ 
+# results without feature scaling
+print(grad.descent(x,1000))
+ 
+# results with feature scaling
+print(grad.descent(x.scaled,1000))
+ 
+# ----------------------------------------------------------------------- 
+# cost and convergence intuition
+# -----------------------------------------------------------------------
+ 
+# typically we would iterate the algorithm above until the 
+# change in the cost function (as a result of the updated b0 and b1 values)
+# was extremely small value 'c'. C would be referred to as the set 'convergence'
+# criteria. If C is not met after a given # of iterations, you can increase the
+# iterations or change the learning rate 'alpha' to speed up convergence
+ 
+# get results from gradient descent
+beta <- grad.descent(x,1000)
+ 
+# define the 'hypothesis function'
+h <- function(xi,b0,b1) {
+ b0 + b1 * xi 
+}
+ 
+# define the cost function   
+cost <- t(mat.or.vec(1,m))
+  for(i in 1:m) {
+    cost[i,1] <-  (1 /(2*m)) * (h(x[i,2],beta[1,1],beta[1,2])- y[i,])^2 
+  }
+ 
+totalCost <- colSums(cost)
+print(totalCost)
+ 
+# save this as Cost1000
+cost1000 <- totalCost
+ 
+# change iterations to 1001 and compute cost1001
+beta <- (grad.descent(x,1001))
+cost <- t(mat.or.vec(1,m))
+  for(i in 1:m) {
+    cost[i,1] <-  (1 /(2*m)) * (h(x[i,2],beta[1,1],beta[1,2])- y[i,])^2 
+  }
+cost1001 <- colSums(cost)
+ 
+# does this difference meet your convergence criteria? 
+print(cost1000 - cost1001)
+
+xs <- seq(0,4,len=20) # create some values
+ 
+# define the function we want to optimize
+ 
+f <-  function(x) {
+1.2 * (x-2)^2 + 3.2
+}
+ 
+# plot the function 
+plot(xs , f (xs), type="l",xlab="x",ylab=expression(1.2(x-2)^2 +3.2))
+ 
+# calculate the gradeint df/dx
+ 
+grad <- function(x){
+  1.2*2*(x-2)
+}
+ 
+ 
+# df/dx = 2.4(x-2), if x = 2 then 2.4(2-2) = 0
+# The actual solution we will approximate with gradeint descent
+# is  x = 2 as depicted in the plot below
+ 
+lines (c (2,2), c (3,8), col="red",lty=2)
+text (2.1,7, "Closedform solution",col="red",pos=4)
+ 
+ 
+# gradient descent implementation
+x <- 0.1 # initialize the first guess for x-value
+xtrace <- x # store x -values for graphing purposes (initial)
+ftrace <- f(x) # store y-values (function evaluated at x) for graphing purposes (initial)
+stepFactor <- 0.6 # learning rate 'alpha'
+for (step in 1:100) {
+x <- x - stepFactor*grad(x) # gradient descent update
+xtrace <- c(xtrace,x) # update for graph
+ftrace <- c(ftrace,f(x)) # update for graph
+}
+ 
+lines ( xtrace , ftrace , type="b",col="blue")
+text (0.5,6, "Gradient Descent",col="blue",pos= 4)
+ 
+# print final value of x
+print(x) # x converges to 2.0
+
+```
