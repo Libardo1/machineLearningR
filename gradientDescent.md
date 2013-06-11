@@ -1,6 +1,6 @@
 Gradient Descent
 ================
-Il gradient descent è un algoritmo che, data una certa funzione ipotesi _h_ e funzione costo _J_ carattetizzata da un numero qualsiasi di features <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&theta;</mi></mrow></math>, fa iterativamente variare suddetti parametri in modo da minimizzare il valore della funzione costo J. L'idea di base è che la funzione costo dipende direttamente dal residuo, ovvero tanto più basso è il valore che assume la funzione costo, tanto minore è il residuo e quindi maggiore la capacità descrittiva del modello di regressione.
+Il gradient descent è un algoritmo che, data una certa funzione ipotesi _h_ e una funzione costo _J_ caratterizzata da un numero qualsiasi di features <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>&theta;</mi></mrow></math>, fa iterativamente variare suddetti parametri in modo da minimizzare il valore della funzione costo J. L'idea di base è che la funzione costo dipende direttamente dal residuo, ovvero tanto più basso è il valore che assume la funzione costo, tanto minore è il residuo e quindi maggiore la capacità descrittiva del modello di regressione.
 
 Ciò è intuitivo se ricordiamo che:
 
