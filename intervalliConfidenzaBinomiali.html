@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Intervalli di confidenza (distribuzioni binomiali)</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+</head>
+
+<body>
+<h1>Intervalli di confidenza (distribuzioni binomiali)</h1>
+
+<p>Supponiamo di voler calcolare gli intervalli di confidenza di un esperimento modellato come di tipo bernoulliano e supponiamo i seguenti parametri:</p>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+  <mi>n</mi>
+  <mo>=</mo>
+  <mn>1000</mn>
+  <mspace width="1.5em" />
+  <mtext>(numero di esperimenti)</mtext>
+</mrow>
+</math>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+  <mover>
+          <mi>p</mi>
+        <mo>&and;</mo>
+  </mover>
+  <mo>=</mo>
+  <mn>0,576</mn>
+  <mspace width="1.5em" />
+  <mtext>(media campionaria di successi)</mtext>
+</mrow>
+</math>
+
+<p>Supponiamo <em>p</em> la media reale della popolazione nel modello teorico.
+Sappiamo che il valore atteso per <math display="inline"><mrow><mover><mi>p</mi><mo>&and;</mo></mover></mrow></math> è esattamente uguale a <em>p</em> ovvero:</p>
+
+<math display="block">
+<mrow>
+  <mi>&Epsilon;</mi>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mover accent="true">
+              <mi>p</mi>
+            <mo>&Hat;</mo>
+      </mover>
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <mi>p</mi>
+</mrow>
+</math>
+
+<p>E che la varianza campionaria è pari a:</p>
+
+<math display="block">
+<mrow>
+  <mi>Var</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mover accent="true">
+              <mi>p</mi>
+            <mo>&Hat;</mo>
+      </mover>
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mn>1</mn>
+      <mo>-</mo>
+      <mi>p</mi>
+    </mrow>
+    <mrow>
+      <mi>n</mi>
+    </mrow>
+  </mfrac>
+</mrow>
+</math>
+
+<p>Se sussistono le condizioni affinché sia applicabile il teorema del limite centrale, possiamo affermare che <math display="inline"><mrow><mover><mi>p</mi><mo>&and;</mo></mover></mrow></math> segua una distribuzione normale con media il valore atteso per <math display="inline"><mrow><mover><mi>p</mi><mo>&and;</mo></mover></mrow></math> ovvero <em>p</em> e come varianza la varianza campionaria:</p>
+
+<math display="block">
+<mrow>
+  <mover accent="true">
+          <mi>p</mi>
+        <mo>&Hat;</mo>
+  </mover>
+  <mo>&asymp;</mo>
+  <mi>Norm</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mi>p</mi>
+      <mo>,</mo>
+      <mfrac>
+        <mrow>
+          <mi>p</mi>
+          <mfenced open="(" close=")" separators=",">
+            <mrow>
+              <mn>1</mn>
+              <mo>-</mo>
+              <mi>p</mi>
+            </mrow>
+          </mfenced>
+        </mrow>
+        <mrow>
+          <mi>n</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+  </mfenced>
+</mrow>
+</math>
+
+<p>Con un po&#39; di trasformazioni, sottraendo la media e dividendo per la deviazione standard:</p>
+
+<math display="block">
+<mrow>
+  <mfrac>
+    <mrow>
+      <mover accent="true">
+              <mi>p</mi>
+            <mo>&Hat;</mo>
+      </mover>
+      <mo>-</mo>
+      <mi>p</mi>
+    </mrow>
+    <mrow>
+      <msqrt>
+        <mfrac>
+          <mrow>
+            <mi>p</mi>
+            <mfenced open="(" close=")" separators=",">
+              <mrow>
+                <mn>1</mn>
+                <mo>-</mo>
+                <mi>p</mi>
+              </mrow>
+            </mfenced>
+          </mrow>
+          <mrow>
+            <mi>n</mi>
+          </mrow>
+        </mfrac>
+      </msqrt>
+    </mrow>
+  </mfrac>
+  <mo>&asymp;</mo>
+  <mi>Norm</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mn>0</mn>
+      <mo>,</mo>
+      <mn>1</mn>
+    </mrow>
+  </mfenced>
+</mrow>
+</math>
+
+<p>che è una normale standard di cui conosciamo le aree (probabilità) sottese. Ad es. che l&#39;area sottesa tra -1.96 e 1.96 è il 0.95 (95%) e che quindi solo il 5% delle volte si è al di fuori di tali confini. In termini probabilistici:</p>
+
+<math display="block">
+<mrow>
+  <mi>&popf;</mi>
+  <mfenced open="[" close="]" separators=",">
+    <mrow>
+      
+        <mrow>
+          <mo>|</mo>
+          <mfrac>
+            <mrow>
+              <mover accent="true">
+                      <mi>p</mi>
+                    <mo>&Hat;</mo>
+              </mover>
+              <mo>-</mo>
+              <mi>p</mi>
+            </mrow>
+            <mrow>
+              <msqrt>
+                <mfrac>
+                  <mrow>
+                    <mi>p</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mn>1</mn>
+                        <mo>-</mo>
+                        <mi>p</mi>
+                      </mrow>
+                    </mfenced>
+                  </mrow>
+                  <mrow>
+                    <mi>n</mi>
+                  </mrow>
+                </mfrac>
+              </msqrt>
+            </mrow>
+          </mfrac>
+          <mo>|</mo>
+        </mrow>
+      
+      <mo>&geq;</mo>
+      <mn>1,96</mn>
+    </mrow>
+  </mfenced>
+  <mo>&asymp;</mo>
+  <mn>0,05</mn>
+  <mspace width="0.5em" />
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mtext>5%</mtext>
+    </mrow>
+  </mfenced>
+</mrow>
+</math>
+
+<p>Ovvero:</p>
+
+<math display="block">
+<mrow>
+  <mi>&popf;</mi>
+  <mfenced open="[" close="]" separators=",">
+    <mrow>
+      <mo>|</mo>
+      
+        <mrow>
+          <mfrac>
+            <mrow>
+              <mover accent="true">
+                      <mi>p</mi>
+                    <mo>&Hat;</mo>
+              </mover>
+              <mo>-</mo>
+              <mi>p</mi>
+            </mrow>
+            <mrow>
+              <msqrt>
+                <mfrac>
+                  <mrow>
+                    <mi>p</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mn>1</mn>
+                        <mo>-</mo>
+                        <mi>p</mi>
+                      </mrow>
+                    </mfenced>
+                  </mrow>
+                  <mrow>
+                    <mi>n</mi>
+                  </mrow>
+                </mfrac>
+              </msqrt>
+            </mrow>
+          </mfrac>
+          <mo>|</mo>
+        </mrow>
+      
+      <mo>&le;</mo>
+      <mn>1,96</mn>
+    </mrow>
+  </mfenced>
+  <mo>&asymp;</mo>
+  <mn>0,95</mn>
+  <mspace width="0.5em" />
+  <mtext>(95%)</mtext>
+</mrow>
+</math>
+
+<p>Ovvero:</p>
+
+<math display="block">
+<mrow>
+  <mi>&popf;</mi>
+  <mfenced open="[" close="]" separators=",">
+    <mrow>
+      <mo>|</mo>
+      
+        <mrow>
+          <mfrac>
+            <mrow>
+              <mover accent="true">
+                      <mi>p</mi>
+                    <mo>&Hat;</mo>
+              </mover>
+              <mo>-</mo>
+              <mi>p</mi>
+            </mrow>
+            <mrow>
+              <msqrt>
+                <mfrac>
+                  <mrow>
+                    <mi>p</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mn>1</mn>
+                        <mo>-</mo>
+                        <mi>p</mi>
+                      </mrow>
+                    </mfenced>
+                  </mrow>
+                  <mrow>
+                    <mi>n</mi>
+                  </mrow>
+                </mfrac>
+              </msqrt>
+            </mrow>
+          </mfrac>
+          <mo>|</mo>
+        </mrow>
+      
+      <mo>&le;</mo>
+      <mn>1,96</mn>
+    </mrow>
+  </mfenced>
+  <mo>&asymp;</mo>
+  <mn>0,95</mn>
+  <mspace width="0.5em" />
+  <mtext>(95%)</mtext>
+  <mo>&rArr;</mo>
+  <mi>&popf;</mi>
+  
+    <mrow>
+      <mfenced open="[" close="]" separators=",">
+        <mrow>
+          <mi>-1,96</mi>
+          <mo>&le;</mo>
+          <mfrac>
+            <mrow>
+              <mover accent="true">
+                      <mi>p</mi>
+                    <mo>&Hat;</mo>
+              </mover>
+              <mo>-</mo>
+              <mi>p</mi>
+            </mrow>
+            <mrow>
+              <msqrt>
+                <mfrac>
+                  <mrow>
+                    <mi>p</mi>
+                    <mfenced open="(" close=")" separators=",">
+                      <mrow>
+                        <mn>1</mn>
+                        <mo>-</mo>
+                        <mi>p</mi>
+                      </mrow>
+                    </mfenced>
+                  </mrow>
+                  <mrow>
+                    <mi>n</mi>
+                  </mrow>
+                </mfrac>
+              </msqrt>
+            </mrow>
+          </mfrac>
+          <mo>&le;</mo>
+          <mn>1,96</mn>
+        </mrow>
+      </mfenced>
+    </mrow>
+  
+  <mo>&asymp;</mo>
+  <mn>0,95</mn>
+  <mspace width="0.5em" />
+  <mtext>(95%)</mtext>
+</mrow>
+</math>
+
+<p>da cui deriviamo la definizione di intervallo di confidenza, generalizzato 1.96 con z, il valore che assume una normale a un dato alpha/2:</p>
+
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+  <mi>confInt</mi>
+  <mo>=</mo>
+  <mfenced open="[" close="]" separators=",">
+    <mrow>
+      
+        <mrow>
+          <mover accent="true">
+                  <mi>p</mi>
+                <mo>&Hat;</mo>
+          </mover>
+          <mo>-</mo>
+          <msub>
+                  <mi>z</mi>
+                <mfrac>
+                  <mrow>
+                    <mi>&alpha;</mi>
+                  </mrow>
+                  <mrow>
+                    <mn>2</mn>
+                  </mrow>
+                </mfrac>
+          </msub>
+          <msqrt>
+            <mfrac>
+              <mrow>
+                
+                    <mi>p</mi>
+                
+                <mfenced open="(" close=")" separators=",">
+                  <mrow>
+                    <mn>1</mn>
+                    <mo>-</mo>
+                    <mi>p</mi>
+                  </mrow>
+                </mfenced>
+              </mrow>
+              <mrow>
+                <mi>n</mi>
+              </mrow>
+            </mfrac>
+            <mtext>,</mtext>
+            <mspace width="0.5em" />
+          </msqrt>
+        </mrow>
+      
+      <mover accent="true">
+              <mi>p</mi>
+            <mo>&Hat;</mo>
+      </mover>
+      <mo>+</mo>
+      <msub>
+              <mi>z</mi>
+            <mfrac>
+              <mrow>
+                <mi>&alpha;</mi>
+              </mrow>
+              <mrow>
+                <mn>2</mn>
+              </mrow>
+            </mfrac>
+      </msub>
+      <msqrt>
+        <mfrac>
+          <mrow>
+            <mi>p</mi>
+            <mfenced open="(" close=")" separators=",">
+              <mrow>
+                <mn>1</mn>
+                <mo>-</mo>
+                <mi>p</mi>
+              </mrow>
+            </mfenced>
+          </mrow>
+          <mrow>
+            <mi>n</mi>
+          </mrow>
+        </mfrac>
+      </msqrt>
+    </mrow>
+  </mfenced>
+</mrow>
+</math>
+
+<h2>Soluzione 1</h2>
+
+<p>Supponendo di voler calcolare l&#39;intervallo di confidenza al 95% poniamo alfa = 0.05 e utilizziamo la funzione qnorm per valutare il valore z che corrisponda al valore che delimita un area pari ad alfa/2, in quanto essendo la distribuzione simmetrica, il 5% di area residua è distribuito in egual misura sulla cosa destra e sulla coda sinistra.</p>
+
+<p>Usiamo il valore osservato di successi <math display="inline"><mrow><mover><mi>p</mi><mo>&and;</mo></mover></mrow></math> per il valore non noto <em>p</em>. L&#39;area colorata in azzurro è alpha/2=.025
+<img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-1"/> </p>
+
+<p>Possiamo a questo punto calcolare il Margine d&#39;errore (ME) e quindi l&#39;intervallo di confidenza, specificando lower.tail=FALSE in quanto siamo interessati solo al valore positivo di z (in questo modo z sarà uno scalare e non un vettore a due componenti).</p>
+
+<pre><code class="r">a &lt;- 0.05
+n &lt;- 1000
+psegnato &lt;- 0.576
+z &lt;- qnorm(a/2, mean = 0, sd = 1, lower.tail = FALSE)
+# z è uno scalare positivo, calcoliamo il margine d&#39;errore
+ME &lt;- z * sqrt(psegnato * (1 - psegnato)/n)
+psegnato + c(-ME, +ME)
+</code></pre>
+
+<pre><code>## [1] 0.5454 0.6066
+</code></pre>
+
+<h2>Soluzione 2</h2>
+
+<p>Essendo una distribuzione binomiale, utilizziamo il package binom che contiene alcune funzioni per rendere più rapida l&#39;esecuzione, come la binom.confint.</p>
+
+<pre><code class="r">library(&quot;binom&quot;)
+</code></pre>
+
+<pre><code>## Loading required package: lattice
+</code></pre>
+
+<pre><code class="r">a &lt;- 0.05
+n &lt;- 1000
+psegnato &lt;- 0.576
+binom.confint(psegnato * 1000, n, conf.level = 1 - a, methods = &quot;asymptotic&quot;)
+</code></pre>
+
+<pre><code>##       method   x    n  mean  lower  upper
+## 1 asymptotic 576 1000 0.576 0.5454 0.6066
+</code></pre>
+
+<p>Possiamo essere più conservativi in termini di margine d&#39;errore, considerando p=&frac12; (nel caso precedente abbiamo utilizzato la meno conservativa assunzione che la media reale fosse approssimabile alla media campionaria ovvero p=psegnato), dobbiamo ricalcolare il margine d&#39;errore in base alla nuova stima per p.</p>
+
+<pre><code class="r">a &lt;- 0.05
+p &lt;- 1/2
+psegnato &lt;- 0.576
+z &lt;- qnorm(a/2, mean = 0, sd = 1, lower.tail = FALSE)
+ME &lt;- z * sqrt(p * (1 - p)/n)
+psegnato + c(-ME, +ME)
+</code></pre>
+
+<pre><code>## [1] 0.545 0.607
+</code></pre>
+
+</body>
+
+</html>
+
