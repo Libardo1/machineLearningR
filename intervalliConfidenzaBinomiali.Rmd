@@ -1,6 +1,5 @@
 Intervalli di confidenza (distribuzioni binomiali)
 ==================================================
-
 Supponiamo di voler calcolare gli intervalli di confidenza di un esperimento modellato come di tipo bernoulliano e supponiamo i seguenti parametri:
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
