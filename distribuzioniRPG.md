@@ -274,35 +274,32 @@ cat(hwrite(tab3, table.border = "1", table.class = "tab1", width = "100%"))
 
 ### Simulazioni
 E' possibile estrarre dei campioni casuali che rispondono ad una distribuzione binomiale con la funzione _rbinom_.
-#### Simulazione 1: distribuzione del numero di successi su un numero ripetuto di lanci di un pool di dadi di dimensione _n_ con successo a 6+
+#### Simulazione 1: distribuzione del numero di successi su un numero ripetuto di lanci di un pool di dadi di dimensione _nsim1_ con successo a 6+
 
 ```r
+soglia <- 6
 rip1 <- 2e+05
-psim1 <- (sides - 6 + 1)/sides
-sim1 <- (table(rbinom(rip1, n, psim1))/rip1) * 100
+psim1 <- (sides - soglia + 1)/sides
+nsim1 <- 8
+sim1 <- (table(rbinom(rip1, nsim1, psim1))/rip1) * 100
 names(sim1) <- paste(names(sim1), "succ.")
 sim1
 ```
 
 ```
-## 0 succ. 1 succ. 2 succ. 3 succ. 4 succ. 5 succ. 6 succ. 7 succ. 
-##  0.7935  5.4095 16.4325 27.3120 27.5310 16.3045  5.4315  0.7855
+## 0 succ. 1 succ. 2 succ. 3 succ. 4 succ. 5 succ. 6 succ. 7 succ. 8 succ. 
+##  0.3905  3.1465 10.9280 21.7360 27.2285 21.9475 11.0845  3.1600  0.3785
 ```
 
 ```r
 plot(sim1, ylab = "Probabilità", main = paste("Numero di simulazioni:", rip1))
+lines(c(floor(nsim1 * psim1) + 1, floor(nsim1 * psim1) + 1), c(0, sim1[floor(nsim1 * 
+    psim1) + 1]), lwd = 2, col = "red")
+lines(c(ceiling(nsim1 * psim1) + 1, ceiling(nsim1 * psim1) + 1), c(0, sim1[ceiling(nsim1 * 
+    psim1) + 1]), lwd = 2, col = "red")
 ```
 
 ![plot of chunk sim1](figure/sim1.png) 
 
-```r
-atteso <- n * psim1
-atteso
-```
 
-```
-## [1] 3.5
-```
-
-
-in cui è possibile notare come al crescere del numero di esperimenti, per il teorema del limite centrale, la probabilità di ottenere un certo numero di successi si accentra attorno al valore atteso n*psim
+in cui è possibile notare come al crescere del numero di esperimenti, per il teorema del limite centrale, la probabilità di ottenere un certo numero di successi si accentra attorno al valore atteso evidenziato.

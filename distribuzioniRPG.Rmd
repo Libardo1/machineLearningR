@@ -189,16 +189,19 @@ cat(hwrite(tab3, table.border="1", table.class="tab1", width="100%"))
 ```
 ### Simulazioni
 E' possibile estrarre dei campioni casuali che rispondono ad una distribuzione binomiale con la funzione _rbinom_.
-#### Simulazione 1: distribuzione del numero di successi su un numero ripetuto di lanci di un pool di dadi di dimensione _n_ con successo a 6+
+#### Simulazione 1: distribuzione del numero di successi su un numero ripetuto di lanci di un pool di dadi di dimensione _nsim1_ con successo a 6+
 ```{r sim1, dependson="funzione"}
+soglia <- 6
 rip1 <- 200000
-psim1 <- (sides - 6 + 1)/sides
-sim1 <- (table(rbinom(rip1, n, psim1))/rip1)*100
+psim1 <- (sides - soglia + 1)/sides
+nsim1 <- 8
+sim1 <- (table(rbinom(rip1, nsim1 , psim1))/rip1)*100
 names(sim1) <- paste(names(sim1), "succ.")
 sim1  
 plot(sim1, ylab="Probabilità", main=paste("Numero di simulazioni:", rip1))
-atteso <- n*psim1
-atteso
+lines(c(floor(nsim1*psim1)+1, floor(nsim1*psim1)+1), c(0, sim1[floor(nsim1*psim1)+1]) , lwd=2,col="red")
+lines(c(ceiling(nsim1*psim1)+1, ceiling(nsim1*psim1)+1), c(0, sim1[ceiling(nsim1*psim1)+1]) , lwd=2,col="red")
+
 ```
 
-in cui è possibile notare come al crescere del numero di esperimenti, per il teorema del limite centrale, la probabilità di ottenere un certo numero di successi si accentra attorno al valore atteso n*psim
+in cui è possibile notare come al crescere del numero di esperimenti, per il teorema del limite centrale, la probabilità di ottenere un certo numero di successi si accentra attorno al valore atteso evidenziato.
