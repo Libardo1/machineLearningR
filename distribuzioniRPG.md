@@ -136,6 +136,7 @@ In questo caso va usata la funzione di densità di probabilità *dbinom* il cui 
 n <- 7  # Numero di tentativi (dimensione del pool di dadi)
 p <- 1/2  # Probabilità di successo sul singolo tentativo
 k <- 3  # Numero esatto di successi
+sides <- 10  # Facce del dado
 dbinom(k, n, p)
 ```
 
@@ -271,3 +272,37 @@ cat(hwrite(tab3, table.border = "1", table.class = "tab1", width = "100%"))
 <td>7 tiri</td><td>100</td><td>97.2</td><td>84.14</td><td>58.01</td><td>28.98</td><td>9.63</td><td>1.88</td><td>0.16</td></tr>
 </table>
 
+### Simulazioni
+E' possibile estrarre dei campioni casuali che rispondono ad una distribuzione binomiale con la funzione _rbinom_.
+#### Simulazione 1: distribuzione del numero di successi su un numero ripetuto di lanci di un pool di dadi di dimensione _n_ con successo a 6+
+
+```r
+rip1 <- 2e+05
+psim1 <- (sides - 6 + 1)/sides
+sim1 <- (table(rbinom(rip1, n, psim1))/rip1) * 100
+names(sim1) <- paste(names(sim1), "succ.")
+sim1
+```
+
+```
+## 0 succ. 1 succ. 2 succ. 3 succ. 4 succ. 5 succ. 6 succ. 7 succ. 
+##  0.7935  5.4095 16.4325 27.3120 27.5310 16.3045  5.4315  0.7855
+```
+
+```r
+plot(sim1, ylab = "Probabilità", main = paste("Numero di simulazioni:", rip1))
+```
+
+![plot of chunk sim1](figure/sim1.png) 
+
+```r
+atteso <- n * psim1
+atteso
+```
+
+```
+## [1] 3.5
+```
+
+
+in cui è possibile notare come al crescere del numero di esperimenti, per il teorema del limite centrale, la probabilità di ottenere un certo numero di successi si accentra attorno al valore atteso n*psim
