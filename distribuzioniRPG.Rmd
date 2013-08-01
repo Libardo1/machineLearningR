@@ -1,0 +1,188 @@
+Dice Rolling e distribuzioni statistiche
+=========================================
+Qui di seguito sono modellate le distribuzioni statistiche dei principali tipi di tiro di dado utilizzati nel gioco di ruolo.
+
+Pool di dadi
+------------
+Nel pool di dadi, viene decreato il successo se è conseguito un numero minimo di successi al tiro di un insieme di dadi, dove con _successo_ si intende che il risultato del singolo dado sia minore o uguale ad una soglia (roll-under), esattamente uguale, maggiore o uguale ad una soglia (roll-upper).
+
+Essendo una distribuzione di una variabile discreta, l'esperimento è modellabile come una distribuzione binomiale.
+
+### Teoria sulle distribuzioni binomiali
+In teoria della probabilità la distribuzione binomiale è una distribuzione di probabilità discreta che descrive il numero di successi in un processo di Bernoulli. In pratica, la variabile aleatoria
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow>
+  <msub>
+          <mi>S</mi>
+        <mi>n</mi>
+  </msub>
+  <mo>=</mo>
+  <msub>
+          <mi>X</mi>
+        <mn>1</mn>
+  </msub>
+  <mo>+</mo>
+  <msub>
+          <mi>X</mi>
+        <mn>2</mn>
+  </msub>
+  <mo>+</mo>
+  <mo>&hellip;</mo>
+  <mo>+</mo>
+  <msub>
+          <mi>X</mi>
+        <mi>n</mi>
+  </msub>
+</mrow>
+</math>
+somma _n_ variabili aleatorie indipendenti di uguale distribuzione di Bernoulli **B(p)**. Tale distribuzione può presentare solo due valori d'uscita: **successo** (con probabilità _p_) o **insuccesso** (con probabilità _1 - p_).
+
+La distribuzione binomiale _B(n, p)_ è, perciò, descritta dai due parametri:
+
+* Probabilità _p_ di successo
+* Numero _n_ di esperimenti
+
+e presenta la distribuzione di probabilità (la probabilità di avere esattamente _k_ successi su _n_ tentativi):
+<math display="block">
+<mrow>
+  <mi>P</mi><mo>&ApplyFunction;</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mi>k</mi>
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mfrac linethickness="0">
+        <mrow>
+          <mi>n</mi>
+        </mrow>
+        <mrow>
+          <mi>k</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+  </mfenced>
+  <msup>
+          <mi>p</mi>
+        <mi>k</mi>
+  </msup>
+  <msup>
+        <mrow>
+          <mfenced open="(" close=")" separators=",">
+            <mrow>
+              <mn>1</mn>
+              <mo>-</mo>
+              <mi>p</mi>
+            </mrow>
+          </mfenced>
+        </mrow>
+      <mrow>
+        <mi>n</mi>
+        <mo>-</mo>
+        <mi>k</mi>
+      </mrow>
+  </msup>
+</mrow>
+</math>
+che esprime la probabilità di ottenere _k_ successi e _n - k_ fallimenti in una successione di _n_ esperimenti. Il coefficiente binomiale
+<math display="block">
+<mrow>
+  <mfenced open="(" close=")" separators=",">
+    <mrow>
+      <mfrac linethickness="0">
+        <mrow>
+          <mi>n</mi>
+        </mrow>
+        <mrow>
+          <mi>k</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+  </mfenced>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mi>n</mi>
+      <mo>!</mo>
+    </mrow>
+    <mrow>
+      <mi>k</mi>
+      <mo>!</mo>
+      <mfenced open="(" close=")" separators=",">
+        <mrow>
+          <mi>n</mi>
+          <mo>-</mo>
+          <mi>k</mi>
+        </mrow>
+      </mfenced>
+      <mo>!</mo>
+    </mrow>
+  </mfrac>
+</mrow>
+</math>
+esprime il numero di tali successioni, ovvero le combinazioni in cui possono essere disposti i _k_ successi negli _n_ tentativi.
+
+### Esempi con R
+Il successo sul pool di dati può essere modellato come una distribuzione binomiale in quanto gli _n_ dadi tirati rappresentano altrettanti esperimenti indipendenti ed ognuno dei quali con la stessa probabilità _p_ di successo.
+Con il software statistico R è possibile calcolare le probabilità di successo per le distribuzioni binomiali e simulare meccaniche e situazioni di gioco in cui il successo di un'azione è determinato da un lancio.
+
+**Esempio: risultato esatto**
+* Probabilità di conseguire esattamente 3 successi su un pool di 5 dadi a 10 facce in cui il successo è rappresentato da un risultato sul dado di 6 o più (_p = 5/10_).
+In questo caso va usata la funzione di densità di probabilità *dbinom* il cui k=3 (numero di successi), p=1/2 (probabilità che il risultato sul dado sia 6 o più sul singolo tiro) e n=7 (numero di tentativi). 
+```{r esatto}
+n <- 7    # Numero di tentativi (dimensione del pool di dadi)
+p <- 1/2  # Probabilità di successo sul singolo tentativo
+k <- 3    # Numero esatto di successi
+dbinom(k, n, p)  
+```
+**Esempio: numero minimo di successi**
+* A differenza del caso precedente, vuole essere calcolata la probabilità di avere _almeno_ k successi e non _esattamente_ k successi. Per linearità, basta sommare le probabilità P(k=3) + P(k=4) + P(k=5) + P(k=6) + P(k=7).
+```{r almeno, dependson="esatto"}
+sum(dbinom(k:n, n, p))
+```
+In alternativa, si può usare la funzione _pnorm_ per il calcolo della probabilità cumulativa, ovvero la probabilità che P(k<3).
+```{r dependson="almeno"}
+1 - pbinom(k - 1,n,p)  #   Poiché P(k>=3) = 1 - P(k<=2)
+```
+### Tabelle
+Le tabelle sono calcolate con questa funzione, in modo che sia possibile crearne di personalizzate per le proprie esigenze.
+```{r funzione, dependson="almeno"}
+poolDistribution <- function(n, sides=10, digits=2, roll.Under=FALSE){
+  m <- 1:sides
+  names(m) <- paste(m,ifelse(roll.Under,"-", "+"),sep="")
+  s <- 1:n
+  names(s) <- paste(s,n,sep="/")
+  sapply(m, function(m.value) round((if(roll.Under) (1 - pbinom(s - 1, n, (m.value)/sides))*100 else (1 - pbinom(s - 1, n, (sides - m.value + 1)/sides))*100), digits=digits))    
+  
+}
+
+```
+#### Tabella 1: probabilità di successo roll-upper
+* Questa tabella, data la dimensione _n_ del pool di dadi ed il loro numero di facce, restituisce la probabilità che il tiro abbia un numero di successi almeno pari a quelli riportati sulle righe. Sulle colonne è riportata la soglia minima sul singolo tiro di dado per decretare un successo.
+
+```{r tab1, dependson="funzione", results='asis'}
+library(hwriter)
+tab1 <- poolDistribution(n, roll.Under=FALSE)
+cat(hwrite(tab1, table.border="1", table.class="tab1", width="100%"))
+```
+#### Tabella 2: probabilità di successo roll-under
+* Questa tabella è l'antisimmetrica della precedente, in cui però la soglia a decretare il successo sul dado è che il risultato sia al massimo quello riportato in colonna.
+
+```{r tab2, dependson="funzione", results='asis'}
+library(hwriter)
+tab2 <- poolDistribution(n, roll.Under=TRUE)
+cat(hwrite(tab2, table.border="1", table.class="tab1", width="100%"))
+```
+#### Tabella 3: distribuzione dei successi sui tiri roll-under
+* Questa tabella evidenzia le probabilità di avere almeno il dato numero di successi in base al numero di tiri, posta una soglia di successo sul dado di 7+.
+```{r tab3, dependson="funzione", results='asis'}
+library(hwriter)
+tiri <- 1:n
+names(tiri) <- paste(tiri,"tiri")
+succ <- 0:n
+names(succ) <- paste(succ, "+", " ", "successi", sep="")
+tab3 <- sapply(succ, function(m.value) round(100*(1 - pbinom(m.value - 1, tiri, 4/10)), digits=2))
+cat(hwrite(tab3, table.border="1", table.class="tab1", width="100%"))
+```
